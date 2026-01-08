@@ -35,6 +35,7 @@
     .status{
       border:1px solid #eee; border-radius:10px;
       padding:10px 12px; background:#fcfcfc;
+      min-height: 22px;
     }
     a{ color:#0b57d0; text-decoration:underline; }
     .small{ color:#333; }
@@ -62,8 +63,7 @@
     <div class="box">
       <strong>Avant de cliquer :</strong><br>
       · Pose une main sur ton corps<br>
-      · Respire un grand coup à fond<br>
-      · Formule une question précise et clique
+      · Respire un grand coup à fond
     </div>
 
     <div class="actions">
@@ -71,10 +71,7 @@
       <button id="btnReset">Réinitialiser</button>
     </div>
 
-    <div id="out" class="status">
-      Formule ta question intérieurement… puis clique sur
-      <strong>Tirer une carte</strong>.
-    </div>
+    <div id="out" class="status"></div>
 
     <div class="box small" style="margin-top:14px;">
       Une carte passe.<br>
@@ -186,31 +183,40 @@ const out      = document.getElementById("out");
 let drawn = null;
 
 function rand(max){
-  if (crypto && crypto.getRandomValues){
-    const a = new Uint32Array(1);
-    crypto.getRandomValues(a);
-    return a[0] % max;
-  }
+  try{
+    if (window.crypto && crypto.getRandomValues){
+      const a = new Uint32Array(1);
+      crypto.getRandomValues(a);
+      return a[0] % max;
+    }
+  }catch(e){}
   return Math.floor(Math.random() * max);
 }
 
 function render(){
   if (drawn === null){
-    out.innerHTML =
-      'Formule ta question intérieurement… puis clique sur <strong>Tirer une carte</strong>.';
+    out.innerHTML = "";
     btnDraw.disabled = false;
     return;
   }
-  const url = cards[drawn];
   out.innerHTML =
     `<strong>Carte tirée :</strong> <span class="mono">#${drawn+1}</span><br>
-     <a href="${url}" target="_blank" rel="noopener">Ouvrir la carte</a><br>
-     <span class="small">(One-shot) Utilise <strong>Réinitialiser</strong> pour un nouveau tirage.</span>`;
+     <span class="small">La carte s’est ouverte dans un nouvel onglet.</span>`;
   btnDraw.disabled = true;
 }
 
-btnDraw.onclick = () => { if (drawn===null){ drawn = rand(cards.length); render(); } };
-btnReset.onclick = () => { drawn = null; render(); };
+btnDraw.onclick = () => {
+  if (drawn !== null) return;
+  drawn = rand(cards.length);
+  window.open(cards[drawn], "_blank", "noopener");
+  render();
+};
+
+btnReset.onclick = () => {
+  drawn = null;
+  render();
+};
+
 render();
 </script>
 </body>
