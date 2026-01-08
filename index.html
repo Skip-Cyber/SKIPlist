@@ -3,773 +3,215 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Tirage SKIPlist</title>
+  <title>Carte miroir de l’instant</title>
+  <style>
+    body{
+      margin:0; padding:18px;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:#fff; color:#111;
+    }
+    .wrap{ max-width:900px; margin:0 auto; }
+    .card{
+      border:1px solid #ddd; border-radius:12px;
+      padding:14px; background:#fff;
+    }
+    h1{ margin:0 0 6px 0; font-size:28px; }
+    .sub{ margin:0 0 14px 0; color:#444; }
+    .box{
+      border:1px solid #eee; border-radius:10px;
+      padding:12px; background:#fafafa;
+      line-height:1.5; margin-bottom:12px;
+    }
+    .actions{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin:14px 0 10px 0;
+    }
+    button{
+      padding:10px 14px; font-size:16px;
+      border-radius:6px; border:1px solid #999;
+      background:#f3f3f3; cursor:pointer;
+    }
+    button:disabled{ opacity:.55; cursor:not-allowed; }
+    .status{
+      border:1px solid #eee; border-radius:10px;
+      padding:10px 12px; background:#fcfcfc;
+    }
+    a{ color:#0b57d0; text-decoration:underline; }
+    .small{ color:#333; }
+    .mono{ font-variant-numeric: tabular-nums; }
+    .hr{ height:1px; background:#eee; margin:12px 0; }
+  </style>
 </head>
 
-<body style="margin:0;background:#f3f3f3;">
-  <div style="max-width:920px;margin:18px auto;padding:14px;border:1px solid #ddd;border-radius:14px;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:#fff;">
+<body>
+<div class="wrap">
+  <div class="card">
 
-    <div style="display:flex;gap:10px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;">
-      <div>
-        <h2 style="margin:0;">Tirage SKIPlist</h2>
-        <div style="opacity:.75;margin-top:2px;">(Gratuit)</div>
-      </div>
+    <h1>Carte miroir de l’instant</h1>
+    <p class="sub">(Gratuit)</p>
+
+    <div class="box">
+      Rien ne remplace un contact physique avec ton jeu de cartes.<br>
+      Réserve-le ci-dessous.<br><br>
+      <a href="https://artistesrivegauche.hautetfort.com/archive/2025/06/27/pre-commandes-6553011.html"
+         target="_blank" rel="noopener">
+        → Réserver / pré-commande
+      </a>
     </div>
 
-    <div style="margin-top:12px;padding:12px;border:1px solid #eee;border-radius:12px;background:#fafafa;line-height:1.45;">
-      <div>Rien ne remplace un contact physique avec ton jeu de cartes.<br>Commande-le ci-dessous.</div>
-      <div style="margin-top:10px;">
-        <a href="https://artistesrivegauche.hautetfort.com/" target="_blank" rel="noopener">→ Accéder au blog / commander</a>
-      </div>
-
-      <div style="margin-top:12px;font-weight:800;">Avant de tirer :</div>
-      <div>· Pose une main sur ton corps</div>
-      <div>· Respire un grand coup à fond</div>
-      <div>· Formule une question et clique</div>
+    <div class="box">
+      <strong>Avant de cliquer :</strong><br>
+      · Pose une main sur ton corps<br>
+      · Respire un grand coup à fond<br>
+      · Formule une question précise et clique
     </div>
 
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-      <button id="btnDraw"  style="padding:10px 14px;cursor:pointer;">Tirer une carte</button>
-      <button id="btnReset" style="padding:10px 14px;cursor:pointer;">Réinitialiser</button>
-      <button id="btnHistory" style="padding:10px 14px;cursor:pointer;">Historique</button>
+    <div class="actions">
+      <button id="btnDraw">Tirer une carte</button>
+      <button id="btnReset">Réinitialiser</button>
     </div>
 
-    <div id="status" style="margin-top:12px;padding:12px;border:1px solid #eee;border-radius:12px;background:#fcfcfc;line-height:1.45;"></div>
-
-    <!-- Affichage direct -->
-    <div id="readArea" style="display:grid;gap:14px;margin-top:14px;">
-
-      <div id="card1Box" style="display:none;padding:12px;border:1px solid #ddd;border-radius:12px;background:#fff;">
-        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-          <div id="card1Title" style="font-weight:900;">Carte 1</div>
-          <a id="card1Link" href="#" target="_blank" rel="noopener" style="display:none;">Ouvrir la carte</a>
-        </div>
-        <iframe id="card1Frame" title="Carte 1" style="width:100%;height:980px;border:1px solid #eee;margin-top:10px;border-radius:10px;background:#fff;"></iframe>
-        <div id="card1FrameHint" style="display:none;margin-top:10px;padding:10px;border:1px solid #ffd3d3;border-radius:10px;background:#fff5f5;">
-          L’affichage direct peut être bloqué par le site de la carte. Dans ce cas, utilise “Ouvrir la carte”.
-        </div>
-      </div>
-
-      <!-- Mutation différée -->
-      <div id="mutationBox" style="display:none;padding:12px;border:1px solid #ffe08a;border-radius:12px;background:#fff7d6;">
-        <div style="font-weight:900;">Mutation</div>
-        <div style="margin-top:6px;opacity:.85;">
-          (La mutation n’apparaît que si tu le décides.)
-        </div>
-        <button id="btnMutation" style="margin-top:10px;padding:10px 14px;cursor:pointer;">Voir la mutation</button>
-      </div>
-
-      <div id="card2Box" style="display:none;padding:12px;border:1px solid #ddd;border-radius:12px;background:#fff;">
-        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-          <div id="card2Title" style="font-weight:900;">Carte 2 (mutation)</div>
-          <a id="card2Link" href="#" target="_blank" rel="noopener" style="display:none;">Ouvrir la carte</a>
-        </div>
-        <iframe id="card2Frame" title="Carte 2" style="width:100%;height:980px;border:1px solid #eee;margin-top:10px;border-radius:10px;background:#fff;"></iframe>
-        <div id="card2FrameHint" style="display:none;margin-top:10px;padding:10px;border:1px solid #ffd3d3;border-radius:10px;background:#fff5f5;">
-          L’affichage direct peut être bloqué par le site de la carte. Dans ce cas, utilise “Ouvrir la carte”.
-        </div>
-      </div>
+    <div id="out" class="status">
+      Formule ta question intérieurement… puis clique sur
+      <strong>Tirer une carte</strong>.
     </div>
 
-    <!-- Panneau Historique -->
-    <div id="historyPanel" style="display:none;margin-top:14px;padding:12px;border:1px solid #ddd;border-radius:12px;background:#fafafa;">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
-        <div style="font-weight:900;">Historique (relecture)</div>
-        <button id="btnCloseHistory" style="padding:8px 10px;cursor:pointer;">Fermer</button>
-      </div>
-      <div style="margin-top:8px;opacity:.8;">
-        Chronologique · “Réinitialiser” efface la pile.
-      </div>
-      <ol id="historyList" style="margin-top:10px;line-height:1.6;"></ol>
+    <div class="box small" style="margin-top:14px;">
+      Une carte passe.<br>
+      Elle te parle : écoute-la.<br>
+      Elle ne te dit rien : laisse-la passer !<br><br>
+      <strong>Si la carte ne dit rien, qui écoute ?</strong>
+      <div class="hr"></div>
+      Pour revenir au blog, clique sur « Accueil » dans le menu en haut de la page.
     </div>
 
   </div>
+</div>
 
 <script>
-(function(){
-  "use strict";
+const cards = [
+  "https://artistesrivegauche.hautetfort.com/archive/2025/04/30/en-bon-leader-carte-01-6545763.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/03/02-gare-a-l-ego-6546160.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/03/03-tranquille-6546164.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/03/04-tout-est-okay-6546169.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/03/05-ca-coince-6546185.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/03/06-classs-6546188.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/03/07-prepare-toi-6546193.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/03/08-merci-copain-6546207.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/03/08-malin-malin-6546198.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/04/10-ca-roule-6546260.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/04/11-surprise-6546274.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/04/12-ha-ha-ha-6546279.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/04/13-ouf-6546293.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/04/14-oui-mais-6546299.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/04/15-suis-le-guide-6546305.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/04/16-oui-chef-6546307.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/04/17-montre-toi-6546330.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/04/18-a-table-6546342.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/05/19-tous-avec-moi-6546422.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/05/20-ca-change-6546448.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/05/21-souple-6546492.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/05/22-etat-de-grace-6546494.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/05/23-courant-chaud-6546507.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/05/24-au-charbon-6546509.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/06/25-periode-faste-6546608.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/06/26-chuuut-6546623.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/06/27-force-pas-6546639.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/06/28-attention-6546716.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/07/29-transmettre-6546834.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/07/30-la-greve-6546873.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/07/31-6546908.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/07/32-la-patate-6546914.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/08/33-chacun-sa-place-6546991.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/08/34-encore-et-toujours-6547000.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/08/35-rencontre-6547019.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/08/36-avec-des-pincettes-6547023.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/10/37-miam-6547284.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/10/38-grrrrr-6547298.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/10/39-chacun-sa-route-6547304.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/11/40-une-eclaircie-6547395.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/11/41-ca-dort-6547421.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/11/42-la-liberation-6547423.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/11/43-montre-l-exemple-6547425.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/11/44-pas-a-pas-6547434.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/11/45-respire-6547438.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/12/46-cherche-bien-6547502.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/12/47-l-obstacle-6547519.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/12/48-tu-doutes-6547528.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/12/49-pas-d-accord-6547560.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/12/50-la-modestie-6547567.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/12/51-tout-comme-il-faut-6547569.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/13/52-supercherie-6547668.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/13/53-ensemble-6547689.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/13/54-a-l-ecoute-6547701.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/14/55-une-ame-de-chef-6547828.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/14/56-le-repli-strategique-6547835.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/14/57-non-6547840.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/14/58-on-se-calme-6547846.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/14/59-pause-6547852.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/16/60-tout-doux-6548082.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/16/61-pas-de-pitie-6548088.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/16/62-yallah-6548094.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/16/63-ca-glisse-6548098.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/16/64-libre-arbitre-6548119.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/16/65-un-homme-6548134.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/18/66-patron-employe-collegue-6548330.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/18/67-ennemi-adversaire-6548337.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/18/68-allie-guide-soignant-6548345.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/18/69-le-binome-couple-ami-e-6548370.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/18/70-le-concurrent-le-jaloux-6548372.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/18/71-le-fournisseur-le-client-6548377.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/18/72-une-femme-6548378.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/18/73-les-voisins-6548385.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/18/74-la-famille-le-clan-6548388.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/18/75-l-etranger-le-voyageur-6548402.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/18/76-l-energie-du-bois-6548405.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/77-energie-du-feu-6548419.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/78-energie-de-la-terre-6548442.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/79-energie-du-fer-6548458.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/80-energie-de-l-eau-6548479.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/81-le-cosmos-l-ether-6548492.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/82-1mn-dans-le-ciel-6548508.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/83-1mn-a-ecouter-l-orage-6548561.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/84-1mn-pour-ecouter-le-vent-6548567.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/85-1mn-pour-te-promener-en-montagne-6548571.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/86-1mn-au-bord-d-un-lac-6548573.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/87-la-lune-6548584.html",
+  "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/88-le-soleil-6548594.html"
+];
 
-  // ---------- Utils ----------
-  function safeHtml(s){
-    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+const btnDraw  = document.getElementById("btnDraw");
+const btnReset = document.getElementById("btnReset");
+const out      = document.getElementById("out");
+let drawn = null;
+
+function rand(max){
+  if (crypto && crypto.getRandomValues){
+    const a = new Uint32Array(1);
+    crypto.getRandomValues(a);
+    return a[0] % max;
   }
-  function randIndex(n){ return Math.floor(Math.random() * n); }
-  function pick(list){ return list[randIndex(list.length)]; }
+  return Math.floor(Math.random() * max);
+}
 
-  // ---------- UI ----------
-  const elStatus = document.getElementById("status");
-
-  const btnDraw = document.getElementById("btnDraw");
-  const btnReset = document.getElementById("btnReset");
-  const btnHistory = document.getElementById("btnHistory");
-  const historyPanel = document.getElementById("historyPanel");
-  const btnCloseHistory = document.getElementById("btnCloseHistory");
-  const historyList = document.getElementById("historyList");
-
-  const card1Box = document.getElementById("card1Box");
-  const card1Title = document.getElementById("card1Title");
-  const card1Frame = document.getElementById("card1Frame");
-  const card1Link = document.getElementById("card1Link");
-  const card1FrameHint = document.getElementById("card1FrameHint");
-
-  const mutationBox = document.getElementById("mutationBox");
-  const btnMutation = document.getElementById("btnMutation");
-
-  const card2Box = document.getElementById("card2Box");
-  const card2Title = document.getElementById("card2Title");
-  const card2Frame = document.getElementById("card2Frame");
-  const card2Link = document.getElementById("card2Link");
-  const card2FrameHint = document.getElementById("card2FrameHint");
-
-  function setStatus(html){
-    elStatus.innerHTML = html;
+function render(){
+  if (drawn === null){
+    out.innerHTML =
+      'Formule ta question intérieurement… puis clique sur <strong>Tirer une carte</strong>.';
+    btnDraw.disabled = false;
+    return;
   }
-
-  // ---------- STOP persistence ----------
-  const STOP_KEY = "skiplist_stop_lock_v1";
-  const STOP_WAIT_MS = 24 * 60 * 60 * 1000; // 24h recommendation
-
-  function setStopLock(reason){
-    const payload = { at: Date.now(), reason: reason || "Carte STOP" };
-    localStorage.setItem(STOP_KEY, JSON.stringify(payload));
-  }
-  function clearStopLock(){
-    localStorage.removeItem(STOP_KEY);
-  }
-  function getStopLock(){
-    try{
-      const raw = localStorage.getItem(STOP_KEY);
-      if (!raw) return null;
-      return JSON.parse(raw);
-    }catch(e){
-      return null;
-    }
-  }
-
-  // ---------- History persistence ----------
-  const HIST_KEY = "skiplist_history_v1";
-  let history = []; // [{ts, label, c1:{id,url}, c2:{id,url}|null, urlClicked|null}]
-
-  function saveHistory(){
-    try{
-      localStorage.setItem(HIST_KEY, JSON.stringify(history));
-    }catch(e){}
-  }
-  function loadHistory(){
-    try{
-      const raw = localStorage.getItem(HIST_KEY);
-      if (!raw) return;
-      const arr = JSON.parse(raw);
-      if (Array.isArray(arr)) history = arr;
-    }catch(e){}
-  }
-  function clearHistory(){
-    history = [];
-    try{ localStorage.removeItem(HIST_KEY); }catch(e){}
-  }
-
-  function pushHistory(entry){
-    history.push(entry);
-    saveHistory();
-    renderHistory();
-  }
-
-  function fmtTime(ts){
-    try{
-      const d = new Date(ts);
-      return d.toLocaleString("fr-FR", { hour:"2-digit", minute:"2-digit", second:"2-digit", day:"2-digit", month:"2-digit", year:"numeric" });
-    }catch(e){
-      return "";
-    }
-  }
-
-  function renderHistory(){
-    if (!historyList) return;
-    historyList.innerHTML = "";
-
-    if (!history.length){
-      const li = document.createElement("li");
-      li.textContent = "Aucun élément pour l’instant.";
-      historyList.appendChild(li);
-      return;
-    }
-
-    history.forEach((h, idx) => {
-      const li = document.createElement("li");
-      const time = fmtTime(h.ts);
-      const c1 = h.c1 ? `#${h.c1.id}` : "";
-      const c2 = h.c2 ? ` + #${h.c2.id}` : "";
-      const label = h.label || "Consultation";
-
-      li.innerHTML = `
-        <div style="display:flex;gap:10px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;">
-          <div>
-            <div><b>${safeHtml(label)}</b> <span style="opacity:.75;">(${safeHtml(time)})</span></div>
-            <div style="opacity:.85;">${safeHtml(c1 + c2)}</div>
-          </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button data-r="${idx}" style="padding:8px 10px;cursor:pointer;">Relire</button>
-            ${h.urlClicked ? `<a href="${h.urlClicked}" target="_blank" rel="noopener" style="padding:8px 10px;border:1px solid #ddd;border-radius:8px;background:#fff;text-decoration:none;">Ouvrir</a>` : ``}
-          </div>
-        </div>
-      `;
-      historyList.appendChild(li);
-    });
-
-    historyList.querySelectorAll("button[data-r]").forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        const i = Number(e.currentTarget.getAttribute("data-r"));
-        const h = history[i];
-        if (!h || !h.c1) return;
-        showCardInFrame(1, h.c1, true);
-        if (h.c2) showCardInFrame(2, h.c2, true);
-        if (historyPanel) historyPanel.style.display = "block";
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      });
-    });
-  }
-
-  // ---------- Deck data ----------
-  // Familles (9 cartes chacune)
-  const familles = {
-    violet: [
-      "https://artistesrivegauche.hautetfort.com/archive/2025/04/30/en-bon-leader-carte-01-6545763.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/03/02-gare-a-l-ego-6546160.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/03/03-tranquille-6546164.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/03/04-tout-est-okay-6546169.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/03/05-ca-coince-6546185.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/03/06-classs-6546188.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/03/07-prepare-toi-6546193.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/03/08-merci-copain-6546207.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/03/08-malin-malin-6546198.html"
-    ],
-    bleu: [
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/04/10-ca-roule-6546260.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/04/11-surprise-6546274.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/04/12-ha-ha-ha-6546279.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/04/13-ouf-6546293.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/04/14-oui-mais-6546299.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/04/15-suis-le-guide-6546305.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/04/16-oui-chef-6546307.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/04/17-montre-toi-6546330.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/04/18-a-table-6546342.html"
-    ],
-    cyan: [
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/05/19-tous-avec-moi-6546422.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/05/20-ca-change-6546448.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/05/21-souple-6546492.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/05/22-etat-de-grace-6546494.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/05/23-courant-chaud-6546507.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/05/24-au-charbon-6546509.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/06/25-periode-faste-6546608.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/06/26-chuuut-6546623.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/06/27-force-pas-6546639.html"
-    ],
-    vert: [
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/06/28-attention-6546716.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/07/29-transmettre-6546834.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/07/30-la-greve-6546873.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/07/31-6546908.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/07/32-la-patate-6546914.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/08/33-chacun-sa-place-6546991.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/08/34-encore-et-toujours-6547000.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/08/35-rencontre-6547019.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/08/36-avec-des-pincettes-6547023.html"
-    ],
-    jaune: [
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/10/37-miam-6547284.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/10/38-grrrrr-6547298.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/10/39-chacun-sa-route-6547304.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/11/40-une-eclaircie-6547395.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/11/41-ca-dort-6547421.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/11/42-la-liberation-6547423.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/11/43-montre-l-exemple-6547425.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/11/44-pas-a-pas-6547434.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/11/45-respire-6547438.html"
-    ],
-    orange: [
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/12/46-cherche-bien-6547502.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/12/47-l-obstacle-6547519.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/12/48-tu-doutes-6547528.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/12/49-pas-d-accord-6547560.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/12/50-la-modestie-6547567.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/12/51-tout-comme-il-faut-6547569.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/13/52-supercherie-6547668.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/13/53-ensemble-6547689.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/13/54-a-l-ecoute-6547701.html"
-    ],
-    rouge: [
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/14/55-une-ame-de-chef-6547828.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/14/56-le-repli-strategique-6547835.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/14/57-non-6547840.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/14/58-on-se-calme-6547846.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/14/59-pause-6547852.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/16/60-tout-doux-6548082.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/16/61-pas-de-pitie-6548088.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/16/62-yallah-6548094.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/16/63-ca-glisse-6548098.html"
-    ]
-  };
-
-  // Blancs (24)
-  const blancs = {
-    sujet: [
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/16/65-un-homme-6548134.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/18/66-patron-employe-collegue-6548330.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/18/67-ennemi-adversaire-6548337.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/18/68-allie-guide-soignant-6548345.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/18/69-le-binome-couple-ami-e-6548370.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/18/70-le-concurrent-le-jaloux-6548372.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/18/71-le-fournisseur-le-client-6548377.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/18/72-une-femme-6548378.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/18/73-les-voisins-6548385.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/18/74-la-famille-le-clan-6548388.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/18/75-l-etranger-le-voyageur-6548402.html"
-    ],
-    soin: [
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/18/76-l-energie-du-bois-6548405.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/77-energie-du-feu-6548419.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/78-energie-de-la-terre-6548442.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/79-energie-du-fer-6548458.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/80-energie-de-l-eau-6548479.html"
-    ],
-    voyage: [
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/81-le-cosmos-l-ether-6548492.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/82-1mn-dans-le-ciel-6548508.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/83-1mn-a-ecouter-l-orage-6548561.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/84-1mn-pour-ecouter-le-vent-6548567.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/85-1mn-pour-te-promener-en-montagne-6548571.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/86-1mn-au-bord-d-un-lac-6548573.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/87-la-lune-6548584.html",
-      "https://artistesrivegauche.hautetfort.com/archive/2025/05/19/88-le-soleil-6548594.html"
-    ]
-  };
-  function poolBlanc(){
-    return [].concat(blancs.sujet, blancs.soin, blancs.voyage);
-  }
-
-  // Deck 1..88 (64 est spécial)
-  const deck = [];
-
-  // Helper to find id by url
-  const urlToId = new Map();
-  function addCard(id, url, opts){
-    const c = Object.assign({id, url}, opts || {});
-    deck.push(c);
-    if (url) urlToId.set(url, id);
-  }
-  function cardRefFromUrl(url){
-    return { id: urlToId.get(url) ?? "?", url };
-  }
-
-  // 1-9 violet
-  addCard(1,  familles.violet[0]);
-  addCard(2,  familles.violet[1], { skip:["bleu","vert"] });
-  addCard(3,  familles.violet[2]);
-  addCard(4,  familles.violet[3], { skip:["rouge","orange"] });
-  addCard(5,  familles.violet[4], { stop:true });
-  addCard(6,  familles.violet[5], { skip:["rouge","jaune"] });
-  addCard(7,  familles.violet[6]);
-  addCard(8,  familles.violet[7], { skip:["bleu","blanc"] });
-  addCard(9,  familles.violet[8]);
-
-  // 10-18 bleu
-  addCard(10, familles.bleu[0]);
-  addCard(11, familles.bleu[1],  { skip:["cyan","violet"] });
-  addCard(12, familles.bleu[2]);
-  addCard(13, familles.bleu[3],  { skip:["violet","rouge"] });
-  addCard(14, familles.bleu[4],  { stop:true });
-  addCard(15, familles.bleu[5],  { skip:["violet","jaune"] });
-  addCard(16, familles.bleu[6]);
-  addCard(17, familles.bleu[7],  { skip:["cyan","orange"] });
-  addCard(18, familles.bleu[8]);
-
-  // 19-27 cyan
-  addCard(19, familles.cyan[0]);
-  addCard(20, familles.cyan[1],  { skip:["vert","orange"] });
-  addCard(21, familles.cyan[2]);
-  addCard(22, familles.cyan[3],  { skip:["bleu","violet"] });
-  addCard(23, familles.cyan[4],  { stop:true });
-  addCard(24, familles.cyan[5],  { skip:["bleu","rouge"] });
-  addCard(25, familles.cyan[6]);
-  addCard(26, familles.cyan[7],  { skip:["jaune","vert"] });
-  addCard(27, familles.cyan[8]);
-
-  // 28-36 vert
-  addCard(28, familles.vert[0]);
-  addCard(29, familles.vert[1],  { skip:["jaune","rouge"] });
-  addCard(30, familles.vert[2]);
-  addCard(31, familles.vert[3],  { skip:["cyan","bleu"] });
-  addCard(32, familles.vert[4],  { stop:true });
-  addCard(33, familles.vert[5],  { skip:["cyan","orange"] });
-  addCard(34, familles.vert[6]);
-  addCard(35, familles.vert[7],  { skip:["jaune","violet"] });
-  addCard(36, familles.vert[8]);
-
-  // 37-45 jaune
-  addCard(37, familles.jaune[0]);
-  addCard(38, familles.jaune[1], { skip:["orange","rouge"] });
-  addCard(39, familles.jaune[2]);
-  addCard(40, familles.jaune[3], { skip:["vert","blanc"] });
-  addCard(41, familles.jaune[4], { stop:true });
-  addCard(42, familles.jaune[5], { skip:["vert","bleu"] }); // corrigé : vert+bleu
-  addCard(43, familles.jaune[6]);
-  addCard(44, familles.jaune[7], { skip:["orange","vert"] });
-  addCard(45, familles.jaune[8]);
-
-  // 46-54 orange
-  addCard(46, familles.orange[0]);
-  addCard(47, familles.orange[1], { skip:["rouge","bleu"] });
-  addCard(48, familles.orange[2]);
-  addCard(49, familles.orange[3], { skip:["jaune","violet"] });
-  addCard(50, familles.orange[4], { stop:true });
-  addCard(51, familles.orange[5], { skip:["jaune","vert"] });
-  addCard(52, familles.orange[6]);
-  addCard(53, familles.orange[7], { skip:["rouge","jaune"] });
-  addCard(54, familles.orange[8]);
-
-  // 55-63 rouge
-  addCard(55, familles.rouge[0]);
-  addCard(56, familles.rouge[1], { skip:["violet","blanc"] });
-  addCard(57, familles.rouge[2]);
-  addCard(58, familles.rouge[3], { skip:["orange","cyan"] });
-  addCard(59, familles.rouge[4], { stop:true });
-  addCard(60, familles.rouge[5], { skip:["orange","vert"] });
-  addCard(61, familles.rouge[6]);
-  addCard(62, familles.rouge[7], { skip:["violet","bleu"] });
-  addCard(63, familles.rouge[8]);
-
-  // 64 spécial (sans iframe) — on l'affiche comme message
-  addCard(64, null, { special:"libre_arbitre" });
-
-  // 65-75 blancs sujet (65-71 ont skip “1 couleur”)
-  addCard(65, blancs.sujet[0], { skip1:"violet" });
-  addCard(66, blancs.sujet[1], { skip1:"bleu" });
-  addCard(67, blancs.sujet[2], { skip1:"cyan" });
-  addCard(68, blancs.sujet[3], { skip1:"vert" });
-  addCard(69, blancs.sujet[4], { skip1:"jaune" });
-  addCard(70, blancs.sujet[5], { skip1:"orange" });
-  addCard(71, blancs.sujet[6], { skip1:"rouge" });
-  addCard(72, blancs.sujet[7]);
-  addCard(73, blancs.sujet[8]);
-  addCard(74, blancs.sujet[9]);
-  addCard(75, blancs.sujet[10]);
-
-  // 76-80 soin
-  addCard(76, blancs.soin[0]);
-  addCard(77, blancs.soin[1]);
-  addCard(78, blancs.soin[2]);
-  addCard(79, blancs.soin[3]);
-  addCard(80, blancs.soin[4]);
-
-  // 81-88 voyage (87/88 = STOP)
-  addCard(81, blancs.voyage[0]);
-  addCard(82, blancs.voyage[1]);
-  addCard(83, blancs.voyage[2]);
-  addCard(84, blancs.voyage[3]);
-  addCard(85, blancs.voyage[4]);
-  addCard(86, blancs.voyage[5]);
-  addCard(87, blancs.voyage[6], { stop:true });
-  addCard(88, blancs.voyage[7], { stop:true });
-
-  // ---------- Drawing / mutation ----------
-  let locked = false;
-  let currentCard1 = null;   // full card object or special
-  let currentCard2 = null;   // ref {id,url}
-  let pendingSkipTargets = null; // ["orange"] or ["orange","rouge"] etc.
-
-  function hideMutation(){
-    pendingSkipTargets = null;
-    if (mutationBox) mutationBox.style.display = "none";
-  }
-
-  function showCardInFrame(which, ref, fromHistory){
-    // ref is {id,url} for normal, or {id:64,url:null} for special
-    if (which === 1){
-      currentCard1 = ref;
-      if (card1Box) card1Box.style.display = "block";
-      if (card1Title) card1Title.textContent = "Carte 1 — #" + ref.id;
-      if (card1FrameHint) card1FrameHint.style.display = "none";
-
-      if (!ref.url){
-        // special card 64
-        if (card1Frame) card1Frame.src = "about:blank";
-        if (card1Link) card1Link.style.display = "none";
-      } else {
-        if (card1Link){
-          card1Link.href = ref.url;
-          card1Link.style.display = "inline";
-        }
-        if (card1Frame) card1Frame.src = ref.url;
-
-        // Best-effort hint (iframe may be blocked)
-        setTimeout(()=>{ if (card1FrameHint) card1FrameHint.style.display = "block"; }, 1200);
-      }
-
-      // whenever we show card1, we hide card2 by default (fresh reading)
-      if (!fromHistory){
-        currentCard2 = null;
-        if (card2Box) card2Box.style.display = "none";
-        if (card2Frame) card2Frame.src = "about:blank";
-        if (card2Link) card2Link.style.display = "none";
-      }
-
-    } else {
-      currentCard2 = ref;
-      if (card2Box) card2Box.style.display = "block";
-      if (card2Title) card2Title.textContent = "Carte 2 (mutation) — #" + ref.id;
-      if (card2FrameHint) card2FrameHint.style.display = "none";
-
-      if (ref.url){
-        if (card2Link){
-          card2Link.href = ref.url;
-          card2Link.style.display = "inline";
-        }
-        if (card2Frame) card2Frame.src = ref.url;
-        setTimeout(()=>{ if (card2FrameHint) card2FrameHint.style.display = "block"; }, 1200);
-      } else {
-        if (card2Frame) card2Frame.src = "about:blank";
-        if (card2Link) card2Link.style.display = "none";
-      }
-    }
-  }
-
-  function isStopCard(card){
-    return !!(card && card.stop);
-  }
-
-  function lockStop(reason){
-    locked = true;
-    hideMutation();
-    if (btnDraw) btnDraw.disabled = true;
-    if (btnMutation) btnMutation.disabled = true;
-
-    setStopLock(reason);
-
-    const data = getStopLock();
-    const elapsed = data ? (Date.now() - (data.at || 0)) : 0;
-    const remaining = Math.max(0, STOP_WAIT_MS - elapsed);
-    const hours = Math.ceil(remaining / (60*60*1000));
-
-    setStatus(
-      `🛑 <b>FIN DU TIRAGE (STOP)</b><br>` +
-      `${safeHtml(reason)}<br><br>` +
-      `Recommandation : <b>attendre 24h</b> pour une nouvelle consultation.` +
-      (remaining > 0 ? `<br>(Temps conseillé restant : ~<b>${hours}h</b>)` : ``) +
-      `<br><br>👉 Seul <b>Réinitialiser</b> remet tout à zéro.`
-    );
-  }
-
-  function drawFromFamily(fam){
-    if (fam === "blanc"){
-      const url = pick(poolBlanc());
-      return cardRefFromUrl(url);
-    }
-    const pack = familles[fam];
-    if (!pack || !pack.length) return null;
-    return cardRefFromUrl(pick(pack));
-  }
-
-  function prepareMutationLater(card){
-    // SKIP must appear only AFTER card1 is shown
-    hideMutation();
-
-    if (locked) return;
-
-    let targets = null;
-
-    if (Array.isArray(card.skip) && card.skip.length === 2){
-      targets = card.skip.slice();
-    } else if (typeof card.skip1 === "string" && card.skip1){
-      targets = [card.skip1];
-    }
-
-    if (!targets) return;
-
-    pendingSkipTargets = targets;
-
-    // Delay: give reading time (and ensure card is "shown")
-    setTimeout(() => {
-      if (locked) return;
-      if (!pendingSkipTargets) return;
-      if (mutationBox) mutationBox.style.display = "block";
-    }, 700);
-  }
-
-  function recordOpenClicks(){
-    if (card1Link){
-      card1Link.addEventListener("click", () => {
-        pushHistory({
-          ts: Date.now(),
-          label: "Lien cliqué",
-          c1: currentCard1 && currentCard1.url ? currentCard1 : null,
-          c2: currentCard2 && currentCard2.url ? currentCard2 : null,
-          urlClicked: currentCard1 && currentCard1.url ? currentCard1.url : null
-        });
-      });
-    }
-    if (card2Link){
-      card2Link.addEventListener("click", () => {
-        pushHistory({
-          ts: Date.now(),
-          label: "Lien cliqué",
-          c1: currentCard1 && currentCard1.url ? currentCard1 : null,
-          c2: currentCard2 && currentCard2.url ? currentCard2 : null,
-          urlClicked: currentCard2 && currentCard2.url ? currentCard2.url : null
-        });
-      });
-    }
-  }
-
-  function drawCard1(){
-    if (locked){
-      setStatus("⛔ Tirage terminé (STOP). Réinitialise pour recommencer.");
-      return;
-    }
-
-    hideMutation();
-
-    const card = pick(deck);
-
-    // special 64
-    if (card.special === "libre_arbitre"){
-      currentCard1 = { id:64, url:null };
-      showCardInFrame(1, currentCard1, false);
-      setStatus("✅ Carte 1 affichée : <b>#64 — Libre arbitre</b>.<br>(Tu peux continuer : tirer une carte ou réinitialiser.)");
-
-      pushHistory({
-        ts: Date.now(),
-        label: "Carte tirée",
-        c1: { id:64, url:null },
-        c2: null,
-        urlClicked: null
-      });
-      return;
-    }
-
-    const ref1 = { id: card.id, url: card.url };
-    showCardInFrame(1, ref1, false);
-
-    setStatus("✅ Carte 1 affichée.");
-
-    pushHistory({
-      ts: Date.now(),
-      label: "Carte tirée",
-      c1: ref1,
-      c2: null,
-      urlClicked: null
-    });
-
-    if (isStopCard(card)){
-      lockStop(`Carte STOP (#${card.id})`);
-      return;
-    }
-
-    // prepare mutation but do not reveal immediately
-    prepareMutationLater(card);
-  }
-
-  function doMutation(){
-    if (locked) return;
-    if (!pendingSkipTargets) return;
-
-    // Choose target family
-    let fam;
-    if (pendingSkipTargets.length === 2){
-      fam = (Math.random() < 0.5) ? pendingSkipTargets[0] : pendingSkipTargets[1];
-    } else {
-      fam = pendingSkipTargets[0];
-    }
-
-    // draw mutation card
-    const ref2 = drawFromFamily(fam);
-    if (!ref2){
-      setStatus("⚠️ Mutation indisponible.");
-      hideMutation();
-      return;
-    }
-
-    showCardInFrame(2, ref2, false);
-    setStatus("✅ Mutation affichée.");
-
-    // Update last history entry’s c2 if it was "Carte tirée"
-    // (Keeps chronological list; mutation also adds its own entry)
-    pushHistory({
-      ts: Date.now(),
-      label: "Mutation",
-      c1: currentCard1 && currentCard1.url ? currentCard1 : null,
-      c2: ref2,
-      urlClicked: null
-    });
-
-    hideMutation();
-  }
-
-  function resetAll(){
-    clearStopLock();
-    clearHistory();
-    renderHistory();
-
-    locked = false;
-    currentCard1 = null;
-    currentCard2 = null;
-    pendingSkipTargets = null;
-
-    if (btnDraw) btnDraw.disabled = false;
-    if (btnMutation) btnMutation.disabled = false;
-
-    hideMutation();
-
-    if (card1Box) card1Box.style.display = "none";
-    if (card2Box) card2Box.style.display = "none";
-    if (card1Frame) card1Frame.src = "about:blank";
-    if (card2Frame) card2Frame.src = "about:blank";
-    if (card1Link) card1Link.style.display = "none";
-    if (card2Link) card2Link.style.display = "none";
-
-    setStatus("Formule une question… puis clique sur “Tirer une carte”.");
-  }
-
-  function toggleHistory(show){
-    if (!historyPanel) return;
-    historyPanel.style.display = show ? "block" : "none";
-  }
-
-  // ---------- Init ----------
-  loadHistory();
-  renderHistory();
-  recordOpenClicks();
-
-  // restore STOP if any
-  const stopData = getStopLock();
-  if (stopData){
-    locked = true;
-    if (btnDraw) btnDraw.disabled = true;
-    if (btnMutation) btnMutation.disabled = true;
-
-    const elapsed = Date.now() - (stopData.at || 0);
-    const remaining = Math.max(0, STOP_WAIT_MS - elapsed);
-    const hours = Math.ceil(remaining / (60*60*1000));
-
-    setStatus(
-      `🛑 <b>FIN DU TIRAGE (STOP)</b><br>` +
-      `${safeHtml(stopData.reason || "Carte STOP")}<br><br>` +
-      `Recommandation : <b>attendre 24h</b> pour une nouvelle consultation.` +
-      (remaining > 0 ? `<br>(Temps conseillé restant : ~<b>${hours}h</b>)` : ``) +
-      `<br><br>👉 Seul <b>Réinitialiser</b> remet tout à zéro.`
-    );
-  } else {
-    setStatus("Formule une question… puis clique sur “Tirer une carte”.");
-  }
-
-  // Events
-  btnDraw.addEventListener("click", drawCard1);
-  btnReset.addEventListener("click", resetAll);
-  btnHistory.addEventListener("click", () => toggleHistory(true));
-  btnCloseHistory.addEventListener("click", () => toggleHistory(false));
-  btnMutation.addEventListener("click", doMutation);
-
-})();
+  const url = cards[drawn];
+  out.innerHTML =
+    `<strong>Carte tirée :</strong> <span class="mono">#${drawn+1}</span><br>
+     <a href="${url}" target="_blank" rel="noopener">Ouvrir la carte</a><br>
+     <span class="small">(One-shot) Utilise <strong>Réinitialiser</strong> pour un nouveau tirage.</span>`;
+  btnDraw.disabled = true;
+}
+
+btnDraw.onclick = () => { if (drawn===null){ drawn = rand(cards.length); render(); } };
+btnReset.onclick = () => { drawn = null; render(); };
+render();
 </script>
 </body>
 </html>
